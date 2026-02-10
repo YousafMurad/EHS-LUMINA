@@ -24,7 +24,7 @@ async function getDeadlinesData() {
   // Get current session
   const { data: currentSession } = await supabase
     .from("sessions")
-    .select("id, name")
+    .select("id, name, is_current")
     .eq("is_current", true)
     .single();
 
@@ -52,12 +52,26 @@ async function getDeadlinesData() {
     `)
     .order("created_at", { ascending: false });
 
+  // Cast through unknown: Supabase postgrest-js infers FK joins as arrays,
+  // but single FK relations return single objects at runtime
   return {
     examTypes: examTypes || [],
     classes: classes || [],
     sessions: sessions || [],
     currentSession,
-    deadlines: deadlines || [],
+    deadlines: (deadlines || []) as unknown as Array<{
+      id: string;
+      session_id: string;
+      class_id: string;
+      exam_type_id: string;
+      start_date: string;
+      end_date: string;
+      is_open: boolean;
+      created_at: string;
+      sessions: { id: string; name: string } | null;
+      classes: { id: string; name: string } | null;
+      exam_types: { id: string; name: string; code: string } | null;
+    }>,
   };
 }
 

@@ -85,9 +85,6 @@ async function getDashboardStats(role: UserRole) {
   ]);
 
   // Get fee stats
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
-
   const [totalCollectedResult, totalPendingResult, overdueResult] = await Promise.all([
     supabase.from("payments").select("amount"),
     supabase
@@ -173,8 +170,8 @@ async function getTeacherDashboardData(userId: string, userEmail: string) {
   // Build sections data from assignments
   const assignedSections = await Promise.all(
     (assignments || []).map(async (assignment) => {
-      const classData = assignment.classes as { id: string; name: string } | null;
-      const sectionData = assignment.sections as { id: string; name: string; capacity: number | null } | null;
+      const classData = assignment.classes as unknown as { id: string; name: string } | null;
+      const sectionData = assignment.sections as unknown as { id: string; name: string; capacity: number | null } | null;
       
       // If section is assigned, get students from that section
       // If only class is assigned, get all students from that class
@@ -309,9 +306,21 @@ async function getParentDashboardData(userId: string, userEmail: string, userNam
 
   // Format children data
   const children = linkedStudents.map((link) => {
-    const student = link.students as any;
-    const section = student?.sections as any;
-    const classInfo = section?.classes as any;
+    const student = link.students as unknown as {
+      id: string;
+      name: string;
+      registration_no: string;
+      father_name: string;
+      status: string;
+      photo_url: string | null;
+      sections: {
+        id: string;
+        name: string;
+        classes: { id: string; name: string } | null;
+      } | null;
+    } | null;
+    const section = student?.sections;
+    const classInfo = section?.classes;
 
     return {
       id: student?.id || "",
@@ -531,7 +540,7 @@ async function getOperatorDashboardData(userName: string) {
 
   // Format recent admissions for display
   const formattedAdmissions = (recentAdmissions || []).map((student) => {
-    const section = student.sections as { name: string; classes: { name: string } | null } | null;
+    const section = student.sections as unknown as { name: string; classes: { name: string } | null } | null;
     return {
       id: student.id,
       registrationNo: student.registration_no || "N/A",
@@ -544,7 +553,7 @@ async function getOperatorDashboardData(userName: string) {
 
   // Format pending fees for display
   const formattedPendingFees = (studentPendingFees || []).map((fee) => {
-    const student = fee.students as { 
+    const student = fee.students as unknown as { 
       id: string; 
       registration_no: string; 
       name: string;
@@ -629,7 +638,7 @@ export default async function DashboardPage() {
       <div className="p-6 lg:p-8">
         <ParentDashboard
           parentName={parentData.parentName}
-          children={parentData.children}
+          childrenData={parentData.children}
           attendanceSummary={parentData.attendanceSummary}
           feeInfo={parentData.feeInfo}
           currentSession={parentData.currentSession}

@@ -1,7 +1,7 @@
-// Middleware - Temporarily simplified for frontend development
+// Proxy - Temporarily simplified for frontend development
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const response = NextResponse.next({
     request: {
       headers: request.headers,

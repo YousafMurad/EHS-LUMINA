@@ -42,7 +42,7 @@ interface FeeInfo {
 
 interface ParentDashboardProps {
   parentName: string;
-  children: ChildInfo[];
+  childrenData: ChildInfo[];
   attendanceSummary: Record<string, AttendanceSummary>;
   feeInfo: Record<string, FeeInfo>;
   currentSession: string;
@@ -50,7 +50,7 @@ interface ParentDashboardProps {
 
 export function ParentDashboard({
   parentName,
-  children,
+  childrenData: children,
   attendanceSummary,
   feeInfo,
   currentSession,

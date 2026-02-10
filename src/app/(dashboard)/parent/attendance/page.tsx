@@ -24,7 +24,19 @@ async function getParentData(parentId: string) {
     `)
     .eq("parent_id", parentId);
 
-  return { children: children || [] };
+  // Cast through unknown: Supabase postgrest-js infers FK joins as arrays,
+  // but single FK relations return single objects at runtime
+  return { children: (children || []) as unknown as Array<{
+    id: string;
+    students: {
+      id: string;
+      registration_no: string;
+      name: string;
+      photo_url: string | null;
+      classes: { id: string; name: string } | null;
+      sections: { id: string; name: string } | null;
+    } | null;
+  }> };
 }
 
 // Helper to normalize student data

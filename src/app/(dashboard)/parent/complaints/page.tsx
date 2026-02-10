@@ -40,9 +40,30 @@ async function getParentComplaints(parentId: string) {
     .eq("parent_id", parentId)
     .order("created_at", { ascending: false });
 
+  // Cast through unknown: Supabase postgrest-js infers FK joins as arrays,
+  // but single FK relations return single objects at runtime
   return {
-    children: children || [],
-    complaints: complaints || [],
+    children: (children || []) as unknown as Array<{
+      id: string;
+      students: {
+        id: string;
+        registration_no: string;
+        name: string;
+        classes: { id: string; name: string } | null;
+      };
+    }>,
+    complaints: (complaints || []) as unknown as Array<{
+      id: string;
+      type: "suggestion" | "complaint";
+      subject: string;
+      message: string;
+      status: "pending" | "in_progress" | "resolved" | "closed";
+      response: string | null;
+      responded_at: string | null;
+      responded_by: string | null;
+      created_at: string;
+      students: { id: string; name: string } | null;
+    }>,
   };
 }
 

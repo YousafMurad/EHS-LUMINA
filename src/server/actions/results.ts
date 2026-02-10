@@ -94,7 +94,7 @@ export async function checkResultDeadline(
 
 // Submit single result
 export async function submitResult(data: ResultData) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   // Check deadline
@@ -167,7 +167,7 @@ export async function submitResult(data: ResultData) {
 
 // Submit results in bulk
 export async function submitBulkResults(data: BulkResultData) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   // Check deadline
@@ -362,7 +362,7 @@ export async function createResultDeadline(data: {
   start_date: string;
   end_date: string;
 }) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   const { error } = await supabase

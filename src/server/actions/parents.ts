@@ -2,7 +2,7 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAuth } from "@/lib/auth/helpers";
 import { revalidatePath } from "next/cache";
 
@@ -15,7 +15,7 @@ export async function createParentAccount(
 ) {
   await requireAuth();
   
-  const adminSupabase = createAdminSupabaseClient();
+  const adminSupabase = createAdminClient();
   const supabase = await createServerSupabaseClient();
 
   // Generate a temporary password
@@ -117,7 +117,7 @@ export async function createParentAccount(
 
 // Get parent's children
 export async function getParentChildren(parentId?: string) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   const targetParentId = parentId || user?.id;
@@ -156,7 +156,7 @@ export async function getChildAttendance(
   month?: number,
   year?: number
 ) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   // Verify parent has access to this student
@@ -217,7 +217,7 @@ export async function getChildAttendance(
 
 // Get child's results for parent view
 export async function getChildResults(studentId: string, sessionId?: string) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   // Verify parent has access to this student
@@ -263,7 +263,7 @@ export async function getChildResults(studentId: string, sessionId?: string) {
   // Group by exam type
   const grouped: Record<string, typeof data> = {};
   data?.forEach((result) => {
-    const examType = (result.exam_types as { name: string })?.name || "Unknown";
+    const examType = (result.exam_types as unknown as { name: string })?.name || "Unknown";
     if (!grouped[examType]) {
       grouped[examType] = [];
     }
@@ -275,7 +275,7 @@ export async function getChildResults(studentId: string, sessionId?: string) {
 
 // Get child's fee status for parent view
 export async function getChildFeeStatus(studentId: string) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   // Verify parent has access to this student
@@ -342,7 +342,7 @@ export async function submitSuggestionComplaint(data: {
   priority?: "low" | "normal" | "high" | "urgent";
   isAnonymous?: boolean;
 }) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   const { error } = await supabase
@@ -368,7 +368,7 @@ export async function submitSuggestionComplaint(data: {
 
 // Get parent's suggestions/complaints
 export async function getParentSuggestionsComplaints(parentId?: string) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   const targetParentId = parentId || user?.id;
@@ -441,7 +441,7 @@ export async function respondToSuggestionComplaint(
   response: string,
   newStatus: "in_progress" | "resolved" | "closed"
 ) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   const { error } = await supabase

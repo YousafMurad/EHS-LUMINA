@@ -47,7 +47,21 @@ async function getFeedbackData(status?: string) {
   };
 
   return {
-    feedback: feedback || [],
+    // Cast through unknown: Supabase postgrest-js infers FK joins as arrays,
+    // but single FK relations return single objects at runtime
+    feedback: (feedback || []) as unknown as Array<{
+      id: string;
+      type: "suggestion" | "complaint";
+      subject: string;
+      message: string;
+      status: "pending" | "in_progress" | "resolved" | "closed";
+      response: string | null;
+      responded_at: string | null;
+      responded_by: string | null;
+      created_at: string;
+      parent: { id: string; name: string; email: string; phone: string | null } | null;
+      student: { id: string; name: string; registration_no: string; classes: { id: string; name: string } | null } | null;
+    }>,
     stats,
   };
 }

@@ -137,10 +137,17 @@ export async function getFeeStats() {
 
   const totalOverdue = (overdue || []).reduce((sum, f) => sum + f.amount, 0);
 
+  // Count students with pending fees
+  const { count: totalStudents } = await supabase
+    .from("student_fees")
+    .select("student_id", { count: "exact", head: true })
+    .eq("status", "pending");
+
   return {
     totalCollected,
     totalPending,
     totalOverdue,
+    totalStudents: totalStudents || 0,
     collectionRate: totalPending > 0 
       ? Math.round((totalCollected / (totalCollected + totalPending)) * 100) 
       : 100,

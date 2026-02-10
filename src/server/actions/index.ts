@@ -7,5 +7,6 @@ export * from "./fees";
 export * from "./promotions";
 export * from "./teachers";
 export * from "./operators";
-export * from "./upload";
+// Exclude uploadStudentPhoto from upload.ts to avoid conflict with students.ts
+export { uploadImage, uploadSchoolLogo, uploadTeacherPhoto, deleteImage } from "./upload";
 export * from "./settings";

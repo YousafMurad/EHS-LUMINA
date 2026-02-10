@@ -58,7 +58,7 @@ export async function getSectionAttendance(sectionId: string, date: string) {
 
 // Mark attendance for a single student
 export async function markStudentAttendance(data: MarkAttendanceData) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   // Check if attendance already exists
@@ -111,7 +111,7 @@ export async function markStudentAttendance(data: MarkAttendanceData) {
 
 // Mark attendance in bulk for a section
 export async function markBulkAttendance(data: BulkAttendanceData) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   // Delete existing attendance for the date/section
@@ -146,7 +146,7 @@ export async function markBulkAttendance(data: BulkAttendanceData) {
 
 // Update attendance to half day (when student leaves early)
 export async function markHalfDay(attendanceId: string, leftAt?: string) {
-  const { user } = await requireAuth();
+  const user = await requireAuth();
   const supabase = await createServerSupabaseClient();
 
   const { error } = await supabase
